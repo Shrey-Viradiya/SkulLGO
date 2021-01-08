@@ -1,4 +1,4 @@
-# SkulLGO
+# SkulLGO 💀
 
 This repository contains the code for the course Advance Data Structures
 
