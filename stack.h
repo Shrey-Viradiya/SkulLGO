@@ -1,8 +1,13 @@
 #pragma once
 #include <iostream>
 
+// This header file contains the Stack Class implementation for the 
+// self growable and self shrinking data structure
+// with shadow copying
+
 class Stack{
 private:
+    double threshold;
     int size;
     int top;
     int *stack;
@@ -14,16 +19,19 @@ public:
     int pop();
     int isEmpty();
     int isFull();
+    void setThreshold(double t);
     void displayItems();
 };
 
 Stack::Stack(){
+        threshold = 0.75;
         size = 5;
         top = -1;
         stack = new int[size];
 }
 
 Stack::Stack(int s){
+        threshold = 0.75;
         size = s;
         top = -1;
         stack = new int[size];
@@ -40,6 +48,10 @@ int Stack::isEmpty(){
         return 0;
 }
 
+void Stack::setThreshold(double t){
+    threshold = t;
+}
+
 int Stack::isFull(){
     if(top==(size-1))
         return 1;
@@ -49,16 +61,7 @@ int Stack::isFull(){
 
 void Stack::push(int n){
     using namespace std;
-    if(isFull()){
-        cout << "Stack is Full" << endl;
-        // int sizeAdd;
-        // do
-        // {
-        //     cout << "Enter the additional size (positive integer): " << endl;
-        //     cin >> sizeAdd;
-        // } while (sizeAdd <= 0);
-        
-        
+    if(top >= 0.75*(size-1)){     
         size += size;
         int *stackNew = new int[size];
         for (int i = 0; i <= top; i++)
@@ -79,7 +82,19 @@ int Stack::pop(){
         cout << "Empty Stack.. Returning 0" << endl;
         return 0;
     }
-    return stack[top--];
+    int temp = stack[top--];
+    
+    if(top < (1-threshold)*size){
+        size = (size / 2) + 1;
+        int *stackNew = new int[size];
+        for (int i = 0; i <= top; i++)
+        {
+            stackNew[i] = stack[i];
+        }
+        delete[]stack;
+        stack = stackNew;
+    }
+    return temp;
 }
  
 void Stack::displayItems(){
@@ -88,7 +103,7 @@ void Stack::displayItems(){
     cout << "Size: " << size << endl;
     cout << "No of Elements: " << top+1 << endl;
     cout << "Stack Elements \n------------------" << endl; 
-    for (int i = 0; i <= top; i++)
+    for (int i = top; i >= 0; i--)
     {
         cout << stack[i] << " ";
     }    
