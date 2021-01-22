@@ -61,7 +61,7 @@ int Stack::isFull(){
 
 void Stack::push(int n){
     using namespace std;
-    if(top >= 0.75*(size-1)){     
+    if(top >= threshold*(size-1)){     
         size += size;
         int *stackNew = new int[size];
         for (int i = 0; i <= top; i++)
