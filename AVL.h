@@ -13,7 +13,7 @@ class AVL
         AVL(const char n[50]);
         ~AVL();
         void insert(int key, int object);
-        void Preorder();
+        void traverse(int mode);
 };
 
 void AVL::insert(int key, int object){
@@ -33,13 +33,29 @@ AVL::~AVL()
     cout << "Memory Released of " << name << endl;
 }
 
-void AVL::Preorder(){
+void AVL::traverse(int mode = 0){
     using namespace std;
 
-    cout << "Printing The AVL tree: " << name << " (Preorder Traversal)" << endl;
+    cout << "\n\nPrinting The AVL tree: " << name << endl;
     cout << "===========================" << endl;
     cout << "Key --> Value" << endl;
     cout << "===========================" << endl;
-    traversePreorder(root);
-    cout << "===========================" << endl;
+    if (mode == 0){
+        cout << "Preorder" << endl;
+        traversePreorder(root);
+    }
+    else if (mode == 1){
+        cout << "Inorder" << endl;
+        traverseInorder(root);
+    }
+    else if (mode == 2){
+        cout << "Postorder" << endl;
+        traversePostorder(root);
+    }
+    else{
+        cout << "Invalid Mode" << endl;
+        cout << "Inorder" << endl;
+        traverseInorder(root);
+    }
+    cout << "===========================\n" << endl;
 }

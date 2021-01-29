@@ -45,6 +45,38 @@ void traversePreorder(struct AVLnode* rootNode){
     } 
 }
 
+void traverseInorder(struct AVLnode* rootNode){
+    using namespace std;
+    if (rootNode != nullptr)
+    {
+        if (rootNode->left != nullptr)
+        {
+            traverseInorder(rootNode->left);
+        }
+        cout << rootNode->key << " --> " << rootNode->object << endl;
+        if (rootNode->right != nullptr)
+        {
+            traverseInorder(rootNode->right);
+        }        
+    } 
+}
+
+void traversePostorder(struct AVLnode* rootNode){
+    using namespace std;
+    if (rootNode != nullptr)
+    {
+        if (rootNode->left != nullptr)
+        {
+            traversePostorder(rootNode->left);
+        }
+        if (rootNode->right != nullptr)
+        {
+            traversePostorder(rootNode->right);
+        }
+        cout << rootNode->key << " --> " << rootNode->object << endl;        
+    } 
+}
+
 struct AVLnode* rotateRight(struct AVLnode* node)	
 {	
     struct AVLnode* newParent = node->left;	
@@ -94,8 +126,6 @@ struct AVLnode* insertObject(struct AVLnode* node , int key, int object)
         node = new struct AVLnode;
         node->key = key;
         node->object = object;
-        node->left = nullptr;
-        node->right = nullptr;
         return node;
     }
     if(key > node->key )
@@ -142,4 +172,92 @@ struct AVLnode* insertObject(struct AVLnode* node , int key, int object)
     }    
 
     return node;
+}
+
+int findMin(struct AVLnode* root)
+{
+  while(root->left != NULL) 
+    root = root->left;
+  return root->key;
+}
+
+struct AVLnode* delete_node(struct AVLnode* node,int key)
+{
+    if(node==nullptr)  {
+        printf("Tree is empty");
+        return node;
+    }
+    else if (key < node->key)
+    {
+        node->left = delete_node(node->left, key);
+    }
+    else if(key > node->key)
+    {
+        node->right = delete_node(node->right, key);
+    }
+    else  // value found
+    {
+        if(node->left==nullptr)
+        {
+            struct AVLnode* temp = node;
+            node = node->right;
+            delete temp;
+        }
+        else if(node->right==NULL)
+        {
+            struct AVLnode* temp = node;
+            node=node->left;
+            delete temp;
+        }
+        else
+        {
+            int minimum = findMin(node->right);
+            node->key = minimum;
+            node->right = delete_node(node->right, minimum);
+        }
+    }
+
+    if (node == nullptr) 
+      return node; 
+   
+    node->balanceFactor=balanceFactor(node);
+
+    int balance = node->balanceFactor;
+
+    if(
+        (node->left)->balanceFactor>=0 
+        && 
+        balance>1
+    )
+    {
+        return rotateRight(node);
+    }
+        
+    else if(
+            (node->right)->balanceFactor<=0 
+            &&
+            balance<-1
+        ){
+            return rotateLeft(node);
+        }
+        
+    else if(
+        (node->left)->balanceFactor<0
+        &&
+        balance > 1
+        )
+        {
+            node->left = rotateLeft(node->left);
+            return rotateRight(node);
+        }    
+    else if(
+        (node->right)->balanceFactor>0
+        &&
+        balance <-1
+        )
+        {
+            node->left = rotateRight(node->right);
+            return rotateLeft(node);
+        }    
+        return node;
 }

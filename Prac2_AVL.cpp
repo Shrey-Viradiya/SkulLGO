@@ -9,11 +9,11 @@ int main(){
     data.insert(10,2);
     data.insert(5,5);
     data.insert(15,3);
-    data.Preorder();
+    data.traverse();
     data.insert(3,2);
     data.insert(2,10);
-    data.Preorder();
+    data.traverse();
     data.insert(1,2);
-    data.Preorder();
+    data.traverse(1);
     return 0;
 }
