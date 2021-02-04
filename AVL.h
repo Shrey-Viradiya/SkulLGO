@@ -20,6 +20,7 @@ class AVL
         void AddData(std::string filename, int isHeading);
         void insert(int key, int object);
         void traverse(int mode);
+        int search(int key);
         void PrettyPrinting();
 };
 
@@ -38,6 +39,25 @@ AVL::~AVL()
 
 void AVL::insert(int key, int object){
     root = insertObject(root, key, object);
+}
+
+int AVL::search(int key){
+    struct AVLnode* node = root;
+
+    while (node)
+    {
+        if (node->key == key)
+        {
+            return node->object;
+        }
+        else if(key < node->key){
+            node = node->left;
+        }
+        else{
+            node = node->right;
+        }
+    }
+    return 0;    
 }
 
 void AVL::AddData(std::string filename, int isHeading = 1){

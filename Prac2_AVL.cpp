@@ -10,5 +10,6 @@ int main(){
     data.AddData("data.csv", 1);
     data.traverse();
     data.PrettyPrinting();
+    std::cout << data.search(1) << std::endl;
     return 0;
 }
