@@ -6,14 +6,9 @@
 
 int main(){
     AVL data("Ajino Motado");
-    data.insert(10,2);
-    data.insert(5,5);
-    data.insert(15,3);
+    
+    data.AddData("data.csv", 1);
     data.traverse();
-    data.insert(3,2);
-    data.insert(2,10);
-    data.traverse();
-    data.insert(1,2);
-    data.traverse(1);
+    data.PrettyPrinting();
     return 0;
 }

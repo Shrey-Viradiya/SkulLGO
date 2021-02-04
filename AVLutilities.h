@@ -261,3 +261,21 @@ struct AVLnode* delete_node(struct AVLnode* node,int key)
         }    
         return node;
 }
+
+void printBT(const std::string& prefix, const AVLnode* node, bool isLeft)
+{
+    if( node != nullptr )
+    {
+        std::cout << prefix;
+        std::cout << "|" << std::endl;
+        std::cout << prefix;
+        std::cout << (isLeft ? "|--" : "'--" );
+
+        // print the value of the node
+        std::cout << node->key << "-->" << node->object << std::endl;
+
+        // enter the next tree level - left and right branch
+        printBT( prefix + (isLeft ? "|   " : "    ") , node->left, true);
+        printBT( prefix + (isLeft ? "|   " : "    ") , node->right, false);
+    }
+}
