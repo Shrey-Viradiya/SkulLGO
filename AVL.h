@@ -20,6 +20,7 @@ class AVL
         void AddData(std::string filename, int isHeading);
         void insert(int key, int object);
         void traverse(int mode);
+        void deleteKey(int key);
         int search(int key);
         void PrettyPrinting();
 };
@@ -66,7 +67,7 @@ void AVL::AddData(std::string filename, int isHeading = 1){
     // https://www.gormanalysis.com/blog/reading-and-writing-csv-files-with-cpp/
 
     ifstream myFile(filename);
-    if(!myFile.is_open()) throw runtime_error("Could not open file");
+    // if(!myFile.is_open()) throw runtime_error("Could not open file");
 
     string line, word;
     int val;
@@ -124,4 +125,8 @@ void AVL::traverse(int mode = 1){
 
 void AVL::PrettyPrinting(){
     printBT("", root, false);
+}
+
+void AVL::deleteKey(int key){
+    root = delete_node(root, key);
 }

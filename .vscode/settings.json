@@ -36,6 +36,9 @@
         "xtr1common": "cpp",
         "xutility": "cpp",
         "string": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "fstream": "cpp",
+        "sstream": "cpp",
+        "tuple": "cpp"
     }
 }
