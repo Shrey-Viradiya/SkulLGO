@@ -152,10 +152,16 @@ std::pair<int, int> findMin(ScapeGoatNode* root)
     ScapeGoatNode *temp = root->right;
     if (temp == nullptr)
     {
-        root->parent->left = nullptr;
+        if (root->parent->left == root)
+            root->parent->left = nullptr;
+        else
+            root->parent->right = nullptr;
     }
     else{
-        root->parent->left = temp;
+        if (root->parent->left == root)
+            root->parent->left = temp;
+        else
+            root->parent->right = temp;
         temp->parent = root->parent;
     }
 
