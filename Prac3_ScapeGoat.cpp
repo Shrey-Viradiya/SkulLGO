@@ -8,26 +8,29 @@
 int main(){
     ScapeGoat data("Ajino Motado");
     
-    data.AddData("data.csv", 1);
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     data.insert(i,i*10);
-    //     data.PrettyPrinting();
-    //     std::cout << std::endl;
-    // }
+    // data.AddData("data.csv", 1);
+    for (int i = 0; i < 10; i++)
+    {
+        data.insert(i,i*10);
+        data.PrettyPrinting();
+        std::cout << std::endl;
+    }
     
     // data.traverse();
     data.PrettyPrinting();
 
-    // std::cout << "Searching" << std::endl;
-    // std::cout << "================" << std::endl;
-    // std::cout << data.search(809) << std::endl;
+    std::cout << "Searching" << std::endl;
+    std::cout << "================" << std::endl;
+    std::cout << data.search(809) << std::endl;
 
     std::cout << "After Deleting Some Keys" << std::endl;
-    data.deleteKey(896);
-    data.deleteKey(529);
-    data.deleteKey(40);
-    data.deleteKey(254);
+    data.deleteKey(5);
+    data.deleteKey(3);
+    data.deleteKey(0);
+    data.deleteKey(1);
+    data.PrettyPrinting();
+    data.deleteKey(9);
+    data.deleteKey(7);
     data.PrettyPrinting();
 
     return 0;
