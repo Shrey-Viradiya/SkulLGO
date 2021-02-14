@@ -143,3 +143,23 @@ int packIntoArray(ScapeGoatNode *u, ScapeGoatNode *a[], int i)
     return packIntoArray(u->right, a, i);
 }
 
+std::pair<int, int> findMin(ScapeGoatNode* root)
+{
+    while(root->left != nullptr) 
+        root = root->left;
+    
+    std::pair<int, int> k {root->key, root->object};
+    ScapeGoatNode *temp = root->right;
+    if (temp == nullptr)
+    {
+        root->parent->left = nullptr;
+    }
+    else{
+        root->parent->left = temp;
+        temp->parent = root->parent;
+    }
+
+    delete root;
+    
+    return k;
+}

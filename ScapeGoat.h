@@ -27,8 +27,8 @@ class ScapeGoat
         void PrettyPrinting();
 };
 
-ScapeGoat::ScapeGoat(const char n[50]){
-    strcpy(name, n);
+ScapeGoat::ScapeGoat(const char nameinput[50]){
+    strcpy(name, nameinput);
     n = 0;
     q = 0;
     root = nullptr;
@@ -123,6 +123,14 @@ void ScapeGoat::traverse(int mode = 1){
 }
 
 void ScapeGoat::PrettyPrinting(){
+    using namespace std;
+
+    cout << "\n\nPrinting The ScapeGoatTree: " << name << endl;
+    cout << "n: " << n << endl;
+    cout << "q: " << q << endl;
+    cout << "===========================" << endl;
+    cout << "Key --> Value" << endl;
+    cout << "===========================" << endl;
     printBT("", root, false);
 }
 
@@ -177,6 +185,7 @@ void ScapeGoat::insert(int k, int o){
         d++;
     }
     while (!done);
+    
     n++;
     q++;
     
@@ -207,4 +216,100 @@ void ScapeGoat::insert(int k, int o){
             p->left->parent = p;
         }
     }
+}
+
+void ScapeGoat::deleteKey(int key){
+	ScapeGoatNode * iter = root;
+
+    while (iter->key != key && iter != nullptr )
+    {
+        if(key < iter->key ){
+            iter = iter->left;
+        }
+        else if(key > iter->key){
+            iter = iter->right;
+        }
+    }
+
+    if (iter == nullptr)
+    {
+        std::cout << "Key Not Found" << std::endl;
+        return;
+    }
+
+    if( (iter->left == nullptr) || (iter->right == nullptr) )  
+        {  
+            ScapeGoatNode * temp = iter->left ?  
+                         iter->left :  
+                         iter->right;
+  
+            if (temp == nullptr)  
+            {  
+                // iter
+                if (iter->parent->left == iter)
+                {
+                    iter->parent->left = nullptr;
+                }
+                else{
+                    iter->parent->right = nullptr;
+                }                
+                temp = iter;
+                iter = nullptr;  
+            }  
+            else {
+                temp->parent = iter->parent;
+                if (iter->parent != nullptr){
+                    if (iter->parent->left == iter)
+                    {
+                        iter->parent->left = temp;
+                    }
+                    else{
+                        iter->parent->right = temp;
+                    }
+                }
+                else{
+                    root = temp;
+                }
+                iter = nullptr;
+            }
+                
+        }  
+        else
+        {
+            std::pair<int, int> minimum = findMin(iter->right);
+            iter->key = minimum.first;
+            iter->object = minimum.second;
+        }
+
+    
+
+    if ((2*n) > q && n <= q)
+    {
+        n--;
+    }
+    else{
+        ScapeGoatNode *u = root;
+        int ns = size(u);
+        ScapeGoatNode *p = u->parent;
+        ScapeGoatNode **a = new ScapeGoatNode* [ns];
+        packIntoArray(u, a, 0);
+        if (p == nullptr)
+        {
+            root = buildBalanced(a, 0, ns);
+            root->parent = nullptr;
+        }
+        else if (p->right == u)
+        {
+            p->right = buildBalanced(a, 0, ns);
+            p->right->parent = p;
+        }
+        else
+        {
+            p->left = buildBalanced(a, 0, ns);
+            p->left->parent = p;
+        }
+        n--;
+        q=n;
+    }
+    
 }
