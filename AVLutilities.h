@@ -177,7 +177,7 @@ struct AVLnode* insertObject(struct AVLnode* node , int key, int object)
 
 std::pair<int, int> findMin(struct AVLnode* root)
 {
-    while(root->left != NULL) 
+    while(root->left != nullptr) 
         root = root->left;
     std::pair<int, int> k {root->key, root->object};
     return k;
