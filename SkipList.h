@@ -9,15 +9,17 @@
 class SkipListNode{
         int key;
         int object;
+        int levels;
     public:
         SkipListNode **forwards;
     
         SkipListNode() = delete;
-        SkipListNode(int levels, int k, int o){
-            forwards = new SkipListNode*[levels + 1];
-            for (int i = 0; i <= levels; i++) forwards[i] = nullptr;
+        SkipListNode(int level, int k, int o){
+            forwards = new SkipListNode*[level + 1];
+            for (int i = 0; i <= level; i++) forwards[i] = nullptr;
             key = k;
             object = o;
+            levels = level + 1;
         }
         ~SkipListNode(){
             delete [] forwards;
@@ -27,6 +29,9 @@ class SkipListNode{
         }
         int getObject(){
             return object;
+        }
+        int getLevels(){
+            return levels;
         }
 };
 
@@ -170,4 +175,58 @@ void SkipList::AddData(std::string filename, int isHeading){
 
     // Close file
     myFile.close();
+}
+
+void SkipList::deleteNode(int key){
+    // Keep a list of search path for updating
+    SkipListNode **update = new SkipListNode* [level_limit];
+    for (int i = 0; i < level_limit; i++) update[i] = nullptr;
+    int upperLimit = 0;
+    SkipListNode *iterator = nullptr;
+    for (int i = level_limit - 1; i >= 0; i--)
+    {
+        if (InitialLinks[i] != nullptr && InitialLinks[i]->getKey() < key)
+        {
+            iterator = InitialLinks[i];
+            upperLimit = i;
+            break;
+        }
+        update[i] = InitialLinks[i];
+    }
+
+    if(iterator == nullptr){
+        iterator = InitialLinks[0];
+        if (iterator->getKey() == key)
+        {
+            for (int i = 0; i < iterator->getLevels(); i++)
+            {
+                InitialLinks[i] = iterator->forwards[i];
+                iterator->forwards[i] = nullptr;
+            }
+            delete iterator;
+        }
+    }
+    else{
+        for (int i = upperLimit; i >= 0; i--)
+        {
+            while (iterator->forwards[i] != nullptr && iterator->forwards[i]->getKey() < key)
+            {
+                iterator = iterator->forwards[i];
+            }
+            update[i] = iterator;
+        }
+        iterator = iterator->forwards[0];
+        if (iterator->getKey() != key)
+        {
+            return;
+        }
+        else{
+            for (int i = 0; i < iterator->getLevels(); i++)
+            {
+                (*update[i]).forwards[i] = iterator->forwards[i];
+                iterator->forwards[i] = nullptr;
+            }
+            delete iterator;        
+        }
+    }
 }
