@@ -231,3 +231,45 @@ void SkipList::deleteNode(int key){
         }
     }
 }
+
+int SkipList::Search(int key){
+    int upperLimit = 0;
+    SkipListNode *iterator = nullptr;
+    for (int i = level_limit - 1; i >= 0; i--)
+    {
+        if (InitialLinks[i] != nullptr && InitialLinks[i]->getKey() < key)
+        {
+            iterator = InitialLinks[i];
+            upperLimit = i;
+            break;
+        }
+    }
+
+    if (iterator == nullptr)
+    {
+        iterator = InitialLinks[0];
+        if(iterator->getKey() == key){
+            return iterator->getObject();
+        }
+        return -1;        
+    }
+    else{
+        for (int i = upperLimit; i >= 0; i--)
+        {
+            while (iterator->forwards[i] != nullptr && iterator->forwards[i]->getKey() < key)
+            {
+                iterator = iterator->forwards[i];
+            }
+        }
+        iterator = iterator->forwards[0];
+
+        if (iterator->getKey() == key)
+        {
+            return iterator->getObject();
+        }       
+        return -1;
+        
+        
+    }
+    
+}

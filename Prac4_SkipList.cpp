@@ -6,6 +6,7 @@
 #include <iostream>
 
 int main(){
+    using namespace std;
     SkipList data("SBI ki Line", 5);
 
     // data.AddData("data.csv", 1);
@@ -32,6 +33,10 @@ int main(){
     data.deleteNode(406);
 
     data.Display();
+
+    cout << data.Search(643) << endl;
+    cout << data.Search(718) << endl;
+    cout << data.Search(231) << endl;
 
     return 0;
 }
