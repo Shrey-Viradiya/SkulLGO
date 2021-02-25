@@ -6,12 +6,9 @@
 #include <iostream>
 
 int main(){
-    SkipList data("SBI ki Line", 3);
+    SkipList data("SBI ki Line", 5);
 
-    data.insertNode(3,5);
-    data.insertNode(5,8);
-    data.insertNode(10,5);
-    data.insertNode(1,5);
+    data.AddData("data.csv", 1);
     data.Display();
 
     return 0;

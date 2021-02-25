@@ -1,6 +1,10 @@
-#include<iostream>
+#include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include <stdexcept> // std::runtime_error
+#include <sstream>
+#include <fstream>
+#include <string>
 
 class SkipListNode{
         int key;
@@ -38,6 +42,7 @@ class SkipList{
         void insertNode(int key, int object);
         void deleteNode(int key);
         void Display();
+        void AddData(std::string filename, int isHeading);
 };
 
 SkipList::SkipList(const char nameinput[50], const int limit) : level_limit(limit){
@@ -55,7 +60,7 @@ SkipList::~SkipList(){
 void SkipList::insertNode(int key, int object){
 
     // Keep a list of search path for updating
-    SkipListNode **update;
+    SkipListNode **update = new SkipListNode* [level_limit];
     for (int i = 0; i < level_limit; i++) update[i] = nullptr;
     int upperLimit = 0;
     SkipListNode *iterator = nullptr;
@@ -67,7 +72,7 @@ void SkipList::insertNode(int key, int object){
             upperLimit = i;
             break;
         }
-        *update[i] = *InitialLinks[i];
+        update[i] = InitialLinks[i];
     }
 
     if (iterator == nullptr)
@@ -78,12 +83,12 @@ void SkipList::insertNode(int key, int object){
         for (int i = 0; i <= randomNumber; i++)
         {
             if (update[i] != nullptr){
-                newNode->forwards[i] = update[i]->forwards[i];
-                update[i]->forwards[i] = newNode;
+                newNode->forwards[i] = update[i];
+                InitialLinks[i] = newNode;
             }
             else{
                 newNode->forwards[i] = nullptr;
-                update[i] = newNode;
+                InitialLinks[i] = newNode;
             }
         }
     }
@@ -96,18 +101,18 @@ void SkipList::insertNode(int key, int object){
             }
             update[i] = iterator;
         }
-        int randomNumber = (int)((rand()/RAND_MAX) * (level_limit));
+        int randomNumber = rand()%level_limit;
         SkipListNode *newNode = new SkipListNode(randomNumber, key, object);
 
         for (int i = 0; i <= randomNumber; i++)
         {
             if (update[i] != nullptr){
                 newNode->forwards[i] = update[i]->forwards[i];
-                update[i]->forwards[i] = newNode;
+                (*update[i]).forwards[i] = newNode;
             }
             else{
                 newNode->forwards[i] = nullptr;
-                update[i] = newNode;
+                InitialLinks[i] = newNode;
             }
         }
     }
@@ -118,9 +123,51 @@ void SkipList::Display(){
     cout << "Skip List: " << name << endl;
     cout << "=================================" << endl;
 
-    SkipListNode *iterator = InitialLinks[0];
-    while (iterator != nullptr)
+    for (int i = level_limit -1; i >= 0; i--)
     {
-        cout << "( "<< iterator->getKey() << ", " << iterator->getObject() << " ) -->" << endl;
+        SkipListNode *iterator = InitialLinks[i];
+
+        cout << "Level " << i << ": ";
+        while (iterator != nullptr)
+        {
+            cout << "( "<< iterator->getKey() << ", " << iterator->getObject() << " ) --> ";
+            iterator = iterator->forwards[i];
+        }
+        cout << endl;
+    }   
+}
+
+void SkipList::AddData(std::string filename, int isHeading){
+    using namespace std;
+    // working with csv in CPP
+    // https://www.gormanalysis.com/blog/reading-and-writing-csv-files-with-cpp/
+
+    ifstream myFile(filename);
+    // if(!myFile.is_open()) throw runtime_error("Could not open file");
+
+    string line, word;
+    int val;
+
+    if (isHeading)  getline(myFile, line);
+
+    // Read data, line by line
+    while(getline(myFile, line))
+    {
+        // Create a stringstream of the current line
+        stringstream ss(line);
+        pair<int, int> data; 
+        
+        // add the column data 
+        // of a row to a pair
+        getline(ss, word, ',');
+        data.first = stoi(word);
+
+        getline(ss, word, ',');
+        data.second = stoi(word);
+
+        this->insertNode(data.first, data.second);
     }
+
+    // Close file
+    myFile.close();
 }
