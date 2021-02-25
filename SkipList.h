@@ -139,6 +139,7 @@ void SkipList::Display(){
             iterator = iterator->forwards[i];
         }
         cout << endl;
+        cout << endl;
     }   
 }
 
