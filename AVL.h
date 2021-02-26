@@ -15,6 +15,7 @@ class AVL
         char name[50];
         struct AVLnode *root;
     public:
+        AVL() = delete;
         AVL(const char n[50]);
         ~AVL();
         void AddData(std::string filename, int isHeading);
@@ -23,6 +24,8 @@ class AVL
         void deleteKey(int key);
         int search(int key);
         void PrettyPrinting();
+        std::pair<AVL*, AVL* > splitAtRoot();
+        void setRoot(struct AVLnode *node);
 };
 
 AVL::AVL(const char n[50])
@@ -129,4 +132,43 @@ void AVL::PrettyPrinting(){
 
 void AVL::deleteKey(int key){
     root = delete_node(root, key);
+}
+
+void AVL::setRoot(struct AVLnode *node){
+    root = node;
+}
+
+std::pair<AVL*, AVL*> AVL::splitAtRoot(){
+    struct AVLnode *leftTree = root->left;
+    struct AVLnode *rightTree = root->right;
+
+    char nameleft[50], nameright[50];
+
+    int i=0;
+    while (name[i]!='\0')
+    {
+        nameleft[i] = name[i];
+        nameright[i] = name[i];
+        i++;
+    }
+    nameleft[i] = ':';
+    nameright[i] = ':';
+    nameleft[i+1] = 'L';
+    nameright[i+1] = 'R';
+    nameleft[i+2] = '\0';
+    nameright[i+2] = '\0';
+    
+    AVL *leftAVL = new AVL(nameleft);
+    AVL *rightAVL = new AVL(nameright);
+    leftAVL->setRoot(leftTree);
+    rightAVL->setRoot(rightTree);
+
+    root->left = nullptr;
+    root->right = nullptr;
+
+    leftAVL->insert(root->key, root->object);
+
+    std::pair<AVL*, AVL*> returnPair(leftAVL, rightAVL);
+
+    return returnPair;
 }
