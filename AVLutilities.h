@@ -175,6 +175,54 @@ struct AVLnode* insertObject(struct AVLnode* node , int key, int object)
     return node;
 }
 
+struct AVLnode* insertObjectDr(struct AVLnode* node , struct AVLnode* nodeInsert)
+{
+
+    if(node == nullptr){
+        node = nodeInsert;
+        return node;
+    }
+    if(nodeInsert->key > node->key)
+        node->right = insertObjectDr(node->right, nodeInsert);
+    else if (nodeInsert->key < node->key )
+        node->left = insertObjectDr(node->left, nodeInsert);
+
+    node->balanceFactor=balanceFactor(node);
+
+    if(
+        node->balanceFactor > 1 
+        && 
+        nodeInsert->key < node->left->key 
+        )
+        return rotateRight(node);
+    else if(
+        node->balanceFactor <-1 
+        && 
+        nodeInsert->key > node->right->key
+        )
+        return rotateLeft(node);
+    else if(
+        node->balanceFactor>1
+        &&
+        nodeInsert->key > node->left->key
+        )
+    {
+        node->left = rotateLeft(node->left);
+        return rotateRight(node);
+    }    
+    else if(
+        node->balanceFactor<-1
+        &&
+        nodeInsert->key < node->right->key
+        )
+    {
+        node->right  = rotateRight(node->right);
+        return rotateLeft(node);
+    }    
+
+    return node;
+}
+
 std::pair<int, int> findMin(struct AVLnode* root)
 {
     while(root->left != nullptr) 

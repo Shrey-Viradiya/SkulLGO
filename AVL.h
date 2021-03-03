@@ -25,6 +25,7 @@ class AVL
         int search(int key);
         void PrettyPrinting();
         std::pair<AVL*, AVL* > splitAtRoot();
+        std::pair<AVL*, AVL*> splitAtKey(int key);
         void setRoot(struct AVLnode *node);
 };
 
@@ -127,6 +128,9 @@ void AVL::traverse(int mode = 1){
 }
 
 void AVL::PrettyPrinting(){
+    std::cout << "---------------------------------" << std::endl;
+    std::cout << "\t" << name << std::endl;
+    std::cout << "---------------------------------" << std::endl;
     printBT("", root, false);
 }
 
@@ -167,6 +171,94 @@ std::pair<AVL*, AVL*> AVL::splitAtRoot(){
     root->right = nullptr;
 
     leftAVL->insert(root->key, root->object);
+
+    std::pair<AVL*, AVL*> returnPair(leftAVL, rightAVL);
+
+    return returnPair;
+}
+
+std::pair<AVL*, AVL*> AVL::splitAtKey(int key){
+    if(key == root->key){
+        std::cout<<"Here"<<std::endl;
+        return splitAtRoot();
+    }
+
+    AVLnode *lessThan[100];
+    int lessThanTop = -1;
+    AVLnode *greaterThan[100];
+    int greaterThanTop = -1;
+
+    AVLnode* iterator = root;
+    
+    while (iterator != nullptr && iterator->key != key)
+    {
+        if (iterator->key > key)
+        {
+            if (iterator->right != nullptr)
+                greaterThan[++greaterThanTop] = iterator->right;
+            iterator->right = nullptr;
+            greaterThan[++greaterThanTop] = iterator;
+            iterator = iterator->left;
+            greaterThan[greaterThanTop]->left = nullptr;
+        }
+        else if(iterator->key < key)
+        {
+            if (iterator->left != nullptr)
+                lessThan[++lessThanTop] = iterator->left;
+            iterator->left = nullptr;
+            lessThan[++lessThanTop] = iterator;
+            iterator = iterator->right;
+            lessThan[lessThanTop]->right = nullptr;
+        }      
+    }
+
+    if (iterator != nullptr && iterator->key == key)
+    {
+        if (iterator->right != nullptr)
+            greaterThan[++greaterThanTop] = iterator->right;
+        if (iterator->left != nullptr)
+            lessThan[++lessThanTop] = iterator->left;
+        lessThan[++lessThanTop] = iterator;
+        iterator->left = nullptr;
+        iterator->right = nullptr;
+    }
+
+    AVLnode *leftTreeNode = nullptr;
+    
+    for (int i = 0; i <= lessThanTop; i++)
+    {
+        leftTreeNode = insertObjectDr(leftTreeNode, lessThan[i]);
+    }
+
+    AVLnode *rightTreeNode = nullptr;
+    
+    for (int i = 0; i <= greaterThanTop; i++)
+    {
+        rightTreeNode = insertObjectDr(rightTreeNode, greaterThan[i]);
+    }
+
+    char nameleft[50], nameright[50];
+
+    int i=0;
+    while (name[i]!='\0')
+    {
+        nameleft[i] = name[i];
+        nameright[i] = name[i];
+        i++;
+    }
+    nameleft[i] = ':';
+    nameright[i] = ':';
+    nameleft[i+1] = 'L';
+    nameright[i+1] = 'R';
+    nameleft[i+2] = '\0';
+    nameright[i+2] = '\0';
+    
+    AVL *leftAVL = new AVL(nameleft);
+    AVL *rightAVL = new AVL(nameright);
+    leftAVL->setRoot(leftTreeNode);
+    rightAVL->setRoot(rightTreeNode);
+
+    root = nullptr;
 
     std::pair<AVL*, AVL*> returnPair(leftAVL, rightAVL);
 
