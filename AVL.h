@@ -3,7 +3,6 @@
 #include <cstring>
 #include <string>
 #include <fstream>
-#include <vector>
 #include <stdexcept> // std::runtime_error
 #include <sstream>
 #include "AVLutilities.h"

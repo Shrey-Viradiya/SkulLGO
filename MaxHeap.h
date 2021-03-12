@@ -2,6 +2,9 @@
 #include <iostream>
 #include <cstring>
 #include <string>
+#include <fstream>
+#include <stdexcept> // std::runtime_error
+#include <sstream>
 
 class HeapNode
 {
@@ -40,7 +43,9 @@ class MaxHeap{
         MaxHeap(const char nameinput[50]);
         ~MaxHeap();
         void insert(int key, int object);
+        void AddData(std::string filename, int isHeading);
         void PrettyPrinting();
+        std::pair<int, int> ExtractMax();
 };
 
 MaxHeap::MaxHeap(const char nameinput[50]){
@@ -48,10 +53,19 @@ MaxHeap::MaxHeap(const char nameinput[50]){
     root = nullptr;
 }
 
+void deleteNode(HeapNode *node){
+    if (node != nullptr)
+    {
+        deleteNode(node->left);
+        deleteNode(node->right);
+        delete node;
+    }
+}
+
 MaxHeap::~MaxHeap()
 {
     using namespace std;
-    delete root;
+    deleteNode(root);
     cout << "Memory Released of " << name << endl;
 }
 
@@ -108,6 +122,101 @@ void MaxHeap::insert(int key, int object){
             iter = iter->left;
         }        
     } 
+}
+
+std::pair <int, int> MaxHeap::ExtractMax(){
+    if (root == nullptr) return {-1, -1};
+
+    int key = root->key, object = root->object;
+
+    HeapNode *iter = root;
+    HeapNode *prev = nullptr;
+
+    while (iter != nullptr)
+    {
+        if (iter->left != nullptr && iter->right != nullptr)
+        {
+            if (iter->left->key > iter->right->key)
+            {
+                iter->key = iter->left->key;
+                iter->object = iter->left->object;
+                prev = iter;
+                iter = iter->left;
+            }
+            else
+            {
+                iter->key = iter->right->key;
+                iter->object = iter->right->object;
+                prev = iter;
+                iter = iter->right;
+            }
+        }
+        else
+        {
+            if (iter->left != nullptr)
+            {
+                iter->key = iter->left->key;
+                iter->object = iter->left->object;
+                prev = iter;
+                iter = iter->left;
+            }
+            else if(iter->right != nullptr){
+                iter->key = iter->right->key;
+                iter->object = iter->right->object;
+                prev = iter;
+                iter = iter->right;
+            }
+            else{
+                if (prev == nullptr)
+                {
+                    delete iter;
+                    iter = nullptr;
+                    root = nullptr;
+                }
+                else{
+                    prev->left == iter ? (prev->left = nullptr) : (prev->right = nullptr);
+                    delete iter;
+                    iter = nullptr;
+                }
+            }
+        }
+    }
+    return {key, object};
+}
+
+void MaxHeap::AddData(std::string filename, int isHeading = 1){
+    using namespace std;
+    // working with csv in CPP
+    // https://www.gormanalysis.com/blog/reading-and-writing-csv-files-with-cpp/
+
+    ifstream myFile(filename);
+    // if(!myFile.is_open()) throw runtime_error("Could not open file");
+
+    string line, word;
+    int val;
+
+    if (isHeading)  getline(myFile, line);
+
+    // Read data, line by line
+    while(getline(myFile, line))
+    {
+        // Create a stringstream of the current line
+        stringstream ss(line);
+        pair<int, int> data; 
+        
+        // add the column data 
+        // of a row to a pair
+        getline(ss, word, ',');
+        data.first = stoi(word);
+
+        getline(ss, word, ',');
+        data.second = stoi(word);
+
+        insert(data.first, data.second);
+    }
+
+    // Close file
+    myFile.close();
 }
 
 void printBT(const std::string& prefix, const HeapNode* node, bool isLeft)
